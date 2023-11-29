@@ -24,6 +24,7 @@ const List = ({ list }) => (
     </ul>
 );
 
+//Item component ---------------->
 const Item = ({ item }) => (
     <li>
         <span><a href={item.url}>{item.title}</a></span>
@@ -33,16 +34,20 @@ const Item = ({ item }) => (
     </li>
 );
 
-//Main component --------------->
-const App = () => {
-    const [searchTerm, setSearchTerm] = useState(
-        localStorage.getItem('search') || 'React'
-    )
+//Custom Hook, state & effect
+const useStorageState = (key, initialState) => {
+    const [value, setValue] = useState(localStorage.getItem(key) || initialState)
 
     useEffect(() => {
-        localStorage.setItem('search', searchTerm)
-    }, [searchTerm]
+        localStorage.setItem(key, value)
+    }, [value, key]
     )
+
+    return [value, setValue]
+};
+
+//Main component --------------->
+const App = () => {
 
     const stories = [
         {
@@ -61,11 +66,13 @@ const App = () => {
             points: 5,
             objectID: 1,
         }
-    ]
+    ];
+
+    const [searchTerm, setSearchTerm] = useStorageState('search', 'React');
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value)
-    }
+    };
 
     {/*so, for each (story) check if the story's title includes searchTerm, add toLowerCase so it's not case-sensitive*/ }
     const searchedStories = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -78,8 +85,6 @@ const App = () => {
             <List list={searchedStories} />
         </div>
     )
-
-
 }
 
 export default App
