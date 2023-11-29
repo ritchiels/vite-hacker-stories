@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import './App.css'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 //Search component --------------->
 const Search = ({ search, onSearch }) => (
@@ -35,7 +35,14 @@ const Item = ({ item }) => (
 
 //Main component --------------->
 const App = () => {
-    const [searchTerm, setSearchTerm] = useState('React');
+    const [searchTerm, setSearchTerm] = useState(
+        localStorage.getItem('search') || 'React'
+    )
+
+    useEffect(() => {
+        localStorage.setItem('search', searchTerm)
+    }, [searchTerm]
+    )
 
     const stories = [
         {
@@ -57,10 +64,10 @@ const App = () => {
     ]
 
     const handleSearch = (e) => {
-        setSearchTerm(e.target.value);
+        setSearchTerm(e.target.value)
     }
 
-    {/*so, for each (story) check if the story's title includes searchTerm*/ }
+    {/*so, for each (story) check if the story's title includes searchTerm, add toLowerCase so it's not case-sensitive*/ }
     const searchedStories = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
     return (
