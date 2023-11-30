@@ -1,19 +1,19 @@
 /* eslint-disable react/prop-types */
 import './App.css'
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 //Search component --------------->
-const Search = ({ search, onSearch }) => (
-    <>
-        <label htmlFor="search">Search: </label>
-        <input
-            id="search"
-            type="text"
-            value={search}
-            onChange={onSearch}
-        />
-    </>
-)
+// const Search = ({ search, onSearch }) => (
+//     <>
+//         <label htmlFor="search">Search: </label>
+//         <input
+//             id="search"
+//             type="text"
+//             value={search}
+//             onChange={onSearch}
+//         />
+//     </>
+// )
 
 //List component ---------------->
 const List = ({ list }) => (
@@ -24,7 +24,7 @@ const List = ({ list }) => (
     </ul>
 );
 
-//Item component ---------------->
+//Item component ----------------->
 const Item = ({ item }) => (
     <li>
         <span><a href={item.url}>{item.title}</a></span>
@@ -33,6 +33,32 @@ const Item = ({ item }) => (
         <span>{item.points}</span>
     </li>
 );
+
+//Reusable Input Component ------->
+const InputWithLabel = ({ id, value, type = 'text', onInputChange, isFocused, children }) => {
+
+    const inputRef = useRef();
+
+    useEffect(() => {
+        if (isFocused && inputRef.current) {
+            inputRef.current.focus();
+        }
+    }, [isFocused])
+
+    return (
+        <>
+            <label htmlFor={id}>{children}</label>
+            &nbsp;
+            <input
+                ref={inputRef}
+                id={id}
+                type={type}
+                value={value}
+                onChange={onInputChange}
+            />
+        </>
+    )
+}
 
 //Custom Hook, state & effect
 const useStorageState = (key, initialState) => {
@@ -77,30 +103,20 @@ const App = () => {
     {/*so, for each (story) check if the story's title includes searchTerm, add toLowerCase so it's not case-sensitive*/ }
     const searchedStories = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
-    const InputWithLabel = ({ id, value, type='text', onInputChange, children }) => {
-        <>
-            <label htmlFor={id}>{children}</label>
-            &nbsp;
-            <input 
-                id={id}
-                type={type}
-                value={value}
-                onChange={onInputChange}
-            />
-        </>
-    }
-
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <InputWithLabel 
-                id="search"  
-                value={searchTerm} 
-                onInputChange={handleSearch} 
+            <InputWithLabel
+                id="search"
+                value={searchTerm}
+                isFocused
+                onInputChange={handleSearch}
             >
                 <strong>Search: </strong>
             </InputWithLabel>
+
             <hr />
+
             <List list={searchedStories} />
         </div>
     )
