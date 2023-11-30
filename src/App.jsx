@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 
 //Search component --------------->
 const Search = ({ search, onSearch }) => (
-    <div>
+    <>
         <label htmlFor="search">Search: </label>
         <input
             id="search"
@@ -12,7 +12,7 @@ const Search = ({ search, onSearch }) => (
             value={search}
             onChange={onSearch}
         />
-    </div>
+    </>
 )
 
 //List component ---------------->
@@ -77,10 +77,29 @@ const App = () => {
     {/*so, for each (story) check if the story's title includes searchTerm, add toLowerCase so it's not case-sensitive*/ }
     const searchedStories = stories.filter((story) => story.title.toLowerCase().includes(searchTerm.toLowerCase()));
 
+    const InputWithLabel = ({ id, value, type='text', onInputChange, children }) => {
+        <>
+            <label htmlFor={id}>{children}</label>
+            &nbsp;
+            <input 
+                id={id}
+                type={type}
+                value={value}
+                onChange={onInputChange}
+            />
+        </>
+    }
+
     return (
         <div>
             <h1>My Hacker Stories</h1>
-            <Search search={searchTerm} onSearch={handleSearch} />
+            <InputWithLabel 
+                id="search"  
+                value={searchTerm} 
+                onInputChange={handleSearch} 
+            >
+                <strong>Search: </strong>
+            </InputWithLabel>
             <hr />
             <List list={searchedStories} />
         </div>
