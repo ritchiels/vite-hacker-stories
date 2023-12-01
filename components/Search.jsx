@@ -12,4 +12,4 @@ export const Search = () => {
             <input id="search" type="text" onChange={handleChange}/>
         </div>
     )
-    }
+}
